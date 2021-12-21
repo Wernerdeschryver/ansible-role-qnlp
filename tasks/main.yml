@@ -1,0 +1,76 @@
+# roles/ROLENAME/tasks/main.yml
+---
+
+- name: Load OS/distribution dependent variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+    - "{{ default }}.yml"
+  tags: qnlp
+
+- name: Update OS
+  apt:
+    upgrade: dist
+
+- name: Update apt-get
+  apt:
+    update_cache: yes
+
+- name: Install required packages
+  apt:
+    pkg: 
+      - python
+      - python3-pip
+      - python-pytest
+      - curl
+      - vim
+      - jupyter
+      - expect
+    state: present
+    update_cache: true
+
+- name: Install python packages
+  pip:
+    name:
+      - noisyopt
+      - torch
+      - cython
+      - numpy
+      - pytket-qiskit
+    state: present
+
+- name: Download lambeq (QNLP) installer
+  ansible.builtin.shell: curl -o /install.sh https://cqcl.github.io/lambeq/install.sh
+  
+- name: Set installer permissions
+  file:
+    path: /install.sh
+    mode: '777'
+
+- name: Run installer
+  ansible.builtin.expect:
+    command: sh /install.sh
+    responses:
+      '1-3': '1'
+      '1/2': '2'
+    timeout: 300
+
+- name: Clone lambeq repository for testing
+  ansible.builtin.git: 
+    repo: https://github.com/CQCL/lambeq.git
+    dest: /home/vagrant/lambeq
+
+# - name: Install packages
+#  package:
+#    name: "{{ item }}"
+#    state: present
+#  with_items: "{{ ROLENAME_packages }}"
+#  tags: ROLENAME
+
+# - name: Ensure service is started
+#  service:
+#    name: "{{ ROLENAME_service }}"
+#    state: started
+#    enabled: true
+#  tags: ROLENAME
