@@ -1,0 +1,4 @@
+# roles/ansible-role-qnlp/vars/Ubuntu.yml
+#
+# Distribution-specific variables for RHEL, CentOS, ...
+---

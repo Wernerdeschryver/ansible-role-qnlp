@@ -1,9 +1,9 @@
 ---
 
 galaxy_info:
-  author: bertvv
-  role_name: ROLENAME
-  description: PURPOSE
+  author: Werner De Schryver
+  role_name: ansible-role-qnlp
+  description: Automate installatation of python packages for quantum NLP toolkit 'lambeq'
   license: BSD
   min_ansible_version: 2.10
   platforms:
